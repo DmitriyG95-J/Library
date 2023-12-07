@@ -1,7 +1,9 @@
 package com.example.mylibrary.dto.resp;
 
 import com.example.mylibrary.model.Book;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

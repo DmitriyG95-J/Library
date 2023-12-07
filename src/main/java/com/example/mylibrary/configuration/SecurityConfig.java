@@ -32,11 +32,13 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(requests -> requests
+                                //.requestMatchers("/**").permitAll()
                         .requestMatchers("/swagger/index.html", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll() // Разрешить доступ к Swagger UI и API
                         .requestMatchers("/swagger-ui/index.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/user/users").permitAll()
+                        .anyRequest().permitAll()//authenticated()
                 );
         return http.build();
     }

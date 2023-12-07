@@ -28,6 +28,7 @@ public class User {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_avatar_id")
+    @JsonIgnore
     private File profileAvatar;
 
 

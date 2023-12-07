@@ -32,8 +32,6 @@ public class UserServiceImpl implements UserService {
     private final FileService fileService;
     private final FileRepository fileRepository;
 
-
-
     @Override
     public UserRespDTO getUserInfo(Long id) {
         Optional<User> optionalUser = userRepo.findById(id);
@@ -47,9 +45,12 @@ public class UserServiceImpl implements UserService {
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
         userRespDTO.setBooks(user.getBooks());
-        //userRespDTO.setProfileAvatarId(user.getProfileAvatar()));
-
         return userRespDTO;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
     }
 
     @Override
@@ -63,62 +64,34 @@ public class UserServiceImpl implements UserService {
 
             if (!(FileType.IMAGE).equals(newAvatar.getFileType())) {
                 throw new RuntimeException("Файл для аватарки должен быть изображением");
-            }
-            if (newAvatar.getIsDeleted()) {
+            } if (newAvatar.getIsDeleted()) {
                 throw new RuntimeException("Файл удален");
             }
             user.setProfileAvatar(newAvatar);
-        } else if (updateCurrentUserReqDTO.getDeleteAvatar() != null && updateCurrentUserReqDTO.getDeleteAvatar()) {
-            user.setProfileAvatar(null);
-            file.setIsDeleted(true);
-            fileRepository.save(file);
-        }
-        user = userRepo.save(user);
-
-//        if (user.getProfileAvatar() != null) {
-//            fileService.setAvatar(user, user.getProfileAvatar());
-//        }
-        if (updateCurrentUserReqDTO.getDeleteAvatar() != null && updateCurrentUserReqDTO.getDeleteAvatar()) {
-            user.setProfileAvatar(null);
-            fileService.setAvatar(user, null);
-        }
-        if (updateCurrentUserReqDTO.getAboutMe() != null) {
+            newAvatar.setIsDeleted(false);
+            file.setUrl(newAvatar.getUrl());
+            fileRepository.save(newAvatar);
+        } if (updateCurrentUserReqDTO.getDeleteAvatar() != null) {
+            file.setIsDeleted(updateCurrentUserReqDTO.getDeleteAvatar());
+        } if (updateCurrentUserReqDTO.getAboutMe() != null) {
             user.setAboutMe(updateCurrentUserReqDTO.getAboutMe());
-        }
-        if (updateCurrentUserReqDTO.getUserName() != null) {
+        } if (updateCurrentUserReqDTO.getUserName() != null) {
             user.setUserName(updateCurrentUserReqDTO.getUserName());
         }
         userRepo.save(user);
-
         UserRespDTO userRespDTO = new UserRespDTO();
         userRespDTO.setId(user.getId());
         userRespDTO.setName(user.getUserName());
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
-        if (updateCurrentUserReqDTO.getDeleteAvatar() != null) {
-            userRespDTO.setDeleteAvatar(file.getIsDeleted());
-        }
-        if (user.getProfileAvatar() != null) {
-            userRespDTO.setProfileAvatarId(user.getProfileAvatar().getId());
-            userRespDTO.setAvatarUrl(user.getProfileAvatar().getRemoteUrl());
-        }
-//        if (updateCurrentUserReqDTO.getDeleteAvatar() != null && updateCurrentUserReqDTO.getDeleteAvatar()) {
-//            file.setIsDeleted(updateCurrentUserReqDTO.getDeleteAvatar());
-//            fileService.set;
-//        }
-
-//        if (user.getProfileAvatar() != null) {
-//            userRespDTO.setProfileAvatarId(user.getProfileAvatar().getId());
-//        }
-
+        userRespDTO.setDeleteAvatar(file.getIsDeleted());
+        userRespDTO.setProfileAvatarId(file.getIsDeleted() ? null : file.getId());
+        userRespDTO.setAvatarUrl(file.getIsDeleted() ? null : file.getUrl());
         return userRespDTO;
     }
-
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDTO userEmail = (UserDTO) authentication.getPrincipal();
         return userRepo.findByEmail(userEmail.getEmail()).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
-
-
 }
