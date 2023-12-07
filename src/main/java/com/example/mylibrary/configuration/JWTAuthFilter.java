@@ -35,6 +35,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                     );
                 } catch (RuntimeException e) {
                     SecurityContextHolder.clearContext();
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                     throw e;
                 }
             }

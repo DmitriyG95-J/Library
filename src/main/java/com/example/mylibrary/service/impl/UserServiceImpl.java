@@ -2,6 +2,7 @@ package com.example.mylibrary.service.impl;
 
 
 import com.example.mylibrary.dto.FileDTO;
+import com.example.mylibrary.dto.UserDTO;
 import com.example.mylibrary.dto.req.UserUpdateReqDTO;
 import com.example.mylibrary.dto.resp.UserRespDTO;
 import com.example.mylibrary.model.File;
@@ -16,10 +17,12 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
         userRespDTO.setName(user.getUserName());
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
+        userRespDTO.setBooks(user.getBooks());
         //userRespDTO.setProfileAvatarId(user.getProfileAvatar()));
 
         return userRespDTO;
@@ -78,11 +82,11 @@ public class UserServiceImpl implements UserService {
             user.setProfileAvatar(null);
             fileService.setAvatar(user, null);
         }
-        if (updateCurrentUserReqDTO.getSurname() != null) {
-            user.setUserName(updateCurrentUserReqDTO.getSurname());
-        }
         if (updateCurrentUserReqDTO.getAboutMe() != null) {
             user.setAboutMe(updateCurrentUserReqDTO.getAboutMe());
+        }
+        if (updateCurrentUserReqDTO.getUserName() != null) {
+            user.setUserName(updateCurrentUserReqDTO.getUserName());
         }
         userRepo.save(user);
 
@@ -91,18 +95,29 @@ public class UserServiceImpl implements UserService {
         userRespDTO.setName(user.getUserName());
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
-        userRespDTO.setAvatarUrl(file.getRemoteUrl());
-
+        if (updateCurrentUserReqDTO.getDeleteAvatar() != null) {
+            userRespDTO.setDeleteAvatar(file.getIsDeleted());
+        }
         if (user.getProfileAvatar() != null) {
             userRespDTO.setProfileAvatarId(user.getProfileAvatar().getId());
+            userRespDTO.setAvatarUrl(user.getProfileAvatar().getRemoteUrl());
         }
+//        if (updateCurrentUserReqDTO.getDeleteAvatar() != null && updateCurrentUserReqDTO.getDeleteAvatar()) {
+//            file.setIsDeleted(updateCurrentUserReqDTO.getDeleteAvatar());
+//            fileService.set;
+//        }
+
+//        if (user.getProfileAvatar() != null) {
+//            userRespDTO.setProfileAvatarId(user.getProfileAvatar().getId());
+//        }
 
         return userRespDTO;
     }
 
-    private User getCurrentUser(){
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepo.findByEmail(userEmail).get();
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userEmail = (UserDTO) authentication.getPrincipal();
+        return userRepo.findByEmail(userEmail.getEmail()).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
 
 

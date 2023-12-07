@@ -36,7 +36,7 @@ public class UserController {
 
     @PatchMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UserRespDTO updateCurrentUser(
-            @ModelAttribute @RequestParam(name = "updateCurrentUserReqDTO", required = false)
+            @ModelAttribute @RequestBody/*(name = "updateCurrentUserReqDTO", required = false)*/
             UserUpdateReqDTO userUpdateReqDTO, @RequestParam(name = "avatar", required = false) MultipartFile avatar
     ) {
         return userService.updateCurrentUser(userUpdateReqDTO, avatar);

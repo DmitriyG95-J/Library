@@ -1,8 +1,12 @@
 package com.example.mylibrary.dto.resp;
 
+import com.example.mylibrary.model.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +24,8 @@ public class UserRespDTO {
     private Long profileAvatarId;
 
     private String avatarUrl;
+
+    private Boolean deleteAvatar;
+
+    private List<Book> books = new ArrayList<>();
 }
