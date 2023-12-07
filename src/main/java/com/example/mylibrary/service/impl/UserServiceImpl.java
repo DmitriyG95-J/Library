@@ -75,9 +75,9 @@ public class UserServiceImpl implements UserService {
         }
         user = userRepo.save(user);
 
-        if (user.getProfileAvatar() != null) {
-            fileService.setAvatar(user, user.getProfileAvatar());
-        }
+//        if (user.getProfileAvatar() != null) {
+//            fileService.setAvatar(user, user.getProfileAvatar());
+//        }
         if (updateCurrentUserReqDTO.getDeleteAvatar() != null && updateCurrentUserReqDTO.getDeleteAvatar()) {
             user.setProfileAvatar(null);
             fileService.setAvatar(user, null);

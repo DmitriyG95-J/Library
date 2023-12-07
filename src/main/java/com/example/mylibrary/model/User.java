@@ -26,7 +26,7 @@ public class User {
     @Column
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_avatar_id")
     private File profileAvatar;
 

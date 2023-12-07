@@ -2,6 +2,7 @@ package com.example.mylibrary.service.impl;
 
 import com.example.mylibrary.configuration.utils.MimeTypesUtil;
 import com.example.mylibrary.dto.FileDTO;
+import com.example.mylibrary.dto.UserDTO;
 import com.example.mylibrary.model.File;
 import com.example.mylibrary.model.FileType;
 import com.example.mylibrary.model.User;
@@ -15,6 +16,7 @@ import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,7 +84,7 @@ public class FileServiceImpl implements FileService {
             newFile.setIsDeleted(false);
             newFile = fileRepository.save(newFile);
 
-            Files.copy(file.getInputStream(), pathToLocalFile);
+            //Files.copy(file.getInputStream(), pathToLocalFile);
 
             FileDTO fileDTO = new FileDTO();
             fileDTO.setRemoteUrl(newFile.getRemoteUrl());
@@ -99,11 +101,10 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    @Transactional
     private User getCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userEmail = (UserDTO) authentication.getPrincipal();
+        return userRepo.findByEmail(userEmail.getEmail()).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
 
     private void createDirectoriesForDiffFileTypes() throws IOException {
@@ -128,7 +129,19 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public File findById(Long id) {
-        return null;
+
+        File file = fileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException());
+        checkAvailableForCurrentUser(file);
+
+
+        return file;
+    }
+    private void checkAvailableForCurrentUser(File file) {
+        //User user = getCurrentUser();
+        if (file.getIsDeleted()) {
+            throw new RuntimeException();
+        }
     }
 
     @Override
