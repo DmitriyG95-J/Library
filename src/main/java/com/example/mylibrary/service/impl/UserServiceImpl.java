@@ -57,10 +57,14 @@ public class UserServiceImpl implements UserService {
     public UserRespDTO updateCurrentUser(UserUpdateReqDTO updateCurrentUserReqDTO, MultipartFile avatar) {
         User user = this.getCurrentUser();
         File file = user.getProfileAvatar();
+        if (file == null) {
+            file = new File();
+        }
 
         if (avatar != null) {
             FileDTO newAvatarDTO = fileService.save(avatar);
             File newAvatar = fileService.findById(newAvatarDTO.getId());
+            //user.setProfileAvatar(newAvatar.getAuthor().getProfileAvatar());
 
             if (!(FileType.IMAGE).equals(newAvatar.getFileType())) {
                 throw new RuntimeException("Файл для аватарки должен быть изображением");
@@ -71,7 +75,8 @@ public class UserServiceImpl implements UserService {
             newAvatar.setIsDeleted(false);
             file.setUrl(newAvatar.getUrl());
             fileRepository.save(newAvatar);
-        } if (updateCurrentUserReqDTO.getDeleteAvatar() != null) {
+        }
+        if (updateCurrentUserReqDTO.getDeleteAvatar() != null) {
             file.setIsDeleted(updateCurrentUserReqDTO.getDeleteAvatar());
         } if (updateCurrentUserReqDTO.getAboutMe() != null) {
             user.setAboutMe(updateCurrentUserReqDTO.getAboutMe());
@@ -84,9 +89,18 @@ public class UserServiceImpl implements UserService {
         userRespDTO.setName(user.getUserName());
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
-        userRespDTO.setDeleteAvatar(file.getIsDeleted());
-        userRespDTO.setProfileAvatarId(file.getIsDeleted() ? null : file.getId());
-        userRespDTO.setAvatarUrl(file.getIsDeleted() ? null : file.getUrl());
+        if (file != null) {
+            userRespDTO.setDeleteAvatar(Boolean.TRUE.equals(file.getIsDeleted())); // Проверка на null
+            userRespDTO.setProfileAvatarId(Boolean.TRUE.equals(file.getIsDeleted()) ? null : file.getId());
+            userRespDTO.setAvatarUrl(Boolean.TRUE.equals(file.getIsDeleted()) ? null : file.getUrl());
+        } else {
+            userRespDTO.setDeleteAvatar(null);
+            userRespDTO.setProfileAvatarId(null);
+            userRespDTO.setAvatarUrl(null);
+        }
+//        userRespDTO.setDeleteAvatar(file.getIsDeleted());
+//        userRespDTO.setProfileAvatarId(file.getIsDeleted() ? null : file.getId());
+//        userRespDTO.setAvatarUrl(file.getIsDeleted() ? null : file.getUrl());
         return userRespDTO;
     }
     private User getCurrentUser() {

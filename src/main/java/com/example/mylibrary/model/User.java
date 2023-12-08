@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -42,6 +44,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
     private List<Book> books = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserBook> userBooks = new ArrayList<>();
+
 
     @JsonIgnore
     @Column

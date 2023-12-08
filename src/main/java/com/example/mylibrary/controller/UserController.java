@@ -24,6 +24,7 @@ public class UserController {
     }
     @GetMapping("/users")
     public List<User> getAllUsers() {
+
         return userService.getAllUsers();
     }
     @PatchMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

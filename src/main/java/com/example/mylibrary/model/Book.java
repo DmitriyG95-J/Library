@@ -29,7 +29,7 @@ public class Book {
     private String urlAvatar;
 
     @Column
-    @Range(min = 1, max = 5)
+    @Range(min = 0, max = 5)
     private float rating;
 
     @ElementCollection
@@ -44,12 +44,9 @@ public class Book {
     @Column
     private LocalDateTime dateAdded;
 
-    @Column
-    private Boolean isRead;
-
-    @Column
-    private Boolean isFavorite;
-
     @ManyToMany(mappedBy = "books")
     private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<UserBook> userBooks = new ArrayList<>();
 }
