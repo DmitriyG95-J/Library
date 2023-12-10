@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthenticationService {
-
-
      UserDTO findByEmail(String email);
 
      TokenRespDTO authenticate(CredentialsDTO credentialsDTO);

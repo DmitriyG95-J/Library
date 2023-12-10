@@ -9,16 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 public class UsernamePasswordAuthFilter extends OncePerRequestFilter {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     public UsernamePasswordAuthFilter(UserAuthenticationProvider provider) {
         this.provider = provider;
     }
-
     private final UserAuthenticationProvider provider;
 
     @Override
@@ -39,10 +36,6 @@ public class UsernamePasswordAuthFilter extends OncePerRequestFilter {
                 throw e;
             }
         }
-
         filterChain.doFilter(request, response);
-
     }
-
-
 }

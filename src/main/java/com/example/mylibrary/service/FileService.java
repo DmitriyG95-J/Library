@@ -10,7 +10,6 @@ import java.util.List;
 
 @Service
 public interface FileService {
-
     FileDTO save(MultipartFile file);
 
     File findById(Long id);

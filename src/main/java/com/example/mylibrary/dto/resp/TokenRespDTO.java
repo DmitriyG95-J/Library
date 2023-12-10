@@ -6,8 +6,5 @@ import lombok.Data;
 public class TokenRespDTO {
 
     private String accessToken;
-
-
-
 }
 

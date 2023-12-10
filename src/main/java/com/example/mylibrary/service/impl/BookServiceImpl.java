@@ -30,28 +30,18 @@ public class BookServiceImpl implements BookService {
     private final UserRepo userRepo;
     private final BookRepo bookRepo;
     private final UserBookRepo userBookRepo;
-//    @Override
-//    public List<Book> getUserBooks(Long userId) {
-//        Optional<User> optionalUser = userRepo.findById(userId);
-//
-//        if (optionalUser.isPresent()) {
-//            User user = optionalUser.get();
-//            return user.getBooks();
-//        } else {
-//            throw new RuntimeException("Пользователь не найден");
-//        }
-//    }
-@Override
-public Page<Book> getUserBooks(Long userId, Pageable pageable) {
-    User user = userRepo.findById(userId)
-            .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-    List<Book> userBooks = user.getBooks();
-    int start = (int) pageable.getOffset();
-    int end = Math.min((start + pageable.getPageSize()), userBooks.size());
+    @Override
+    public Page<Book> getUserBooks(Long userId, Pageable pageable) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-    return new PageImpl<>(userBooks.subList(start, end), pageable, userBooks.size());
-}
+        List<Book> userBooks = user.getBooks();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), userBooks.size());
+
+        return new PageImpl<>(userBooks.subList(start, end), pageable, userBooks.size());
+    }
     @Override
     public void addNewBookToCurrentUser(BookRespDTO bookRespDTO) {
         try {
@@ -74,7 +64,6 @@ public Page<Book> getUserBooks(Long userId, Pageable pageable) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        //return bookRespDTO;
     }
 
     @Override

@@ -24,10 +24,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
 
-   private final UserRepo userRepo;
+    private final UserRepo userRepo;
 
-   //private final UserAuthenticationProvider userAuthenticationProvider;
-   private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public UserDTO findByEmail(String email) {
@@ -42,11 +41,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public TokenRespDTO authenticate(CredentialsDTO credentialsDTO) {
-
         String userEmail = credentialsDTO.getEmail();
         String userPassword = credentialsDTO.getPassword();
         Optional<User> userOptional = userRepo.findByEmail(userEmail);
-
         if (userOptional.isEmpty()) {
             throw new BadCredentialsException("Пользователь не зарегистрирован");
         }
@@ -75,6 +72,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(registerReqDTO.getPassword()));
         userRepo.save(user);
     }
-
-
 }

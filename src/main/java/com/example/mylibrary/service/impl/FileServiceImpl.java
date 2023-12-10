@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
-
     private Random random = new Random();
     private final UserRepo userRepo;
 
@@ -147,17 +146,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public void setAvatar(User user, File newAvatar) {
         Long userId = user.getId();
-
-        // Получаем текущий аватар пользователя (если он есть)
         File currentAvatar = fileRepository.findByAuthorId(userId);
-
-        // Если у пользователя уже есть аватар, заменяем его
         if (currentAvatar != null) {
-            currentAvatar.setFileType(FileType.IMAGE); // Присваиваем текущему файлу другой тип
+            currentAvatar.setFileType(FileType.IMAGE);
             fileRepository.save(currentAvatar);
         }
-
-        // Устанавливаем новый аватар для пользователя
         newAvatar.setFileType(FileType.IMAGE);
         newAvatar.setAuthor(user);
         fileRepository.save(newAvatar);

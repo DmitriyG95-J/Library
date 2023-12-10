@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final UserAuthenticationProvider userAuthenticationProvider;
 
@@ -20,7 +19,6 @@ public class SecurityConfig {
         this.userAuthenticationEntryPoint = userAuthenticationEntryPoint;
         this.userAuthenticationProvider = userAuthenticationProvider;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -29,17 +27,16 @@ public class SecurityConfig {
                 .addFilterBefore(new UsernamePasswordAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthFilter(userAuthenticationProvider), UsernamePasswordAuthFilter.class)
                 .csrf().disable()
+                //.cors().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(requests -> requests
-                                //.requestMatchers("/**").permitAll()
-                        .requestMatchers("/swagger/index.html", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll() // Разрешить доступ к Swagger UI и API
-                        .requestMatchers("/swagger-ui/index.html").permitAll()
+                        .requestMatchers("/swagger-ui/index.html", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/books/users").permitAll()
-                        .anyRequest().permitAll()//authenticated()
+                        .anyRequest().authenticated()
                 );
         return http.build();
     }

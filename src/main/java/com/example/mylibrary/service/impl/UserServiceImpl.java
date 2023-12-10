@@ -98,9 +98,6 @@ public class UserServiceImpl implements UserService {
             userRespDTO.setProfileAvatarId(null);
             userRespDTO.setAvatarUrl(null);
         }
-//        userRespDTO.setDeleteAvatar(file.getIsDeleted());
-//        userRespDTO.setProfileAvatarId(file.getIsDeleted() ? null : file.getId());
-//        userRespDTO.setAvatarUrl(file.getIsDeleted() ? null : file.getUrl());
         return userRespDTO;
     }
     private User getCurrentUser() {

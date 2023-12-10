@@ -11,23 +11,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class JWTAuthFilter extends OncePerRequestFilter {
-
     private final UserAuthenticationProvider provider;
-
     public JWTAuthFilter(UserAuthenticationProvider provider) {
         this.provider = provider;
     }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         if (header != null) {
             String[] authElements = header.split(" ");
-
             if (authElements.length == 2 && "Bearer".equals(authElements[0])) {
                 try {
                     SecurityContextHolder.getContext().setAuthentication(
