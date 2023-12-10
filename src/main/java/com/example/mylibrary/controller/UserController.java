@@ -7,6 +7,8 @@ import com.example.mylibrary.repository.UserRepo;
 import com.example.mylibrary.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,9 +22,14 @@ public class UserController {
     private final UserRepo userRepo;
 
     @GetMapping("/users/{id}")
-    @Operation(summary = "Получить инфу о пользователе по Id")
-    public UserRespDTO getUserInfo(@PathVariable Long id) {
-        return userService.getUserInfo(id);
+    @Operation(summary = "Получить инфо о пользователе по Id с пагинацией книг")
+    public UserRespDTO getUserInfo(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userService.getUserInfo(id, pageable);
     }
     @GetMapping("/users")
     @Operation(summary = "Получить всех пользователей")

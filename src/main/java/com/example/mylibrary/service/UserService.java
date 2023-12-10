@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    UserRespDTO getUserInfo(Long id);
+    UserRespDTO getUserInfo(Long id, Pageable pageable);
 
     List<User> getAllUsers();
 

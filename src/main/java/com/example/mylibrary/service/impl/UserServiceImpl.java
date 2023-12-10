@@ -5,9 +5,11 @@ import com.example.mylibrary.dto.FileDTO;
 import com.example.mylibrary.dto.UserDTO;
 import com.example.mylibrary.dto.req.UserUpdateReqDTO;
 import com.example.mylibrary.dto.resp.UserRespDTO;
+import com.example.mylibrary.model.Book;
 import com.example.mylibrary.model.File;
 import com.example.mylibrary.model.FileType;
 import com.example.mylibrary.model.User;
+import com.example.mylibrary.repository.BookRepo;
 import com.example.mylibrary.repository.FileRepository;
 import com.example.mylibrary.repository.UserRepo;
 import com.example.mylibrary.service.FileService;
@@ -31,20 +33,23 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final FileService fileService;
     private final FileRepository fileRepository;
+    private final BookRepo bookRepo;
 
     @Override
-    public UserRespDTO getUserInfo(Long id) {
+    public UserRespDTO getUserInfo(Long id, Pageable pageable) {
         Optional<User> optionalUser = userRepo.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new RuntimeException("пользователь не найден");
+            throw new RuntimeException("Пользователь не найден");
         }
         User user = optionalUser.get();
+        Page<Book> userBooksPage = bookRepo.findByUsers(user, pageable);
+
         UserRespDTO userRespDTO = new UserRespDTO();
         userRespDTO.setId(user.getId());
         userRespDTO.setName(user.getUserName());
         userRespDTO.setEmail(user.getEmail());
         userRespDTO.setAboutMe(user.getAboutMe());
-        userRespDTO.setBooks(user.getBooks());
+        userRespDTO.setBooks(userBooksPage.getContent());
         return userRespDTO;
     }
 
