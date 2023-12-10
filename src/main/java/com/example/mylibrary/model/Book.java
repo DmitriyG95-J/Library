@@ -1,5 +1,8 @@
 package com.example.mylibrary.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
@@ -13,6 +16,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "books")
+@JsonIgnoreProperties({"users", "userBooks"})
 public class Book {
 
     @Id
@@ -32,6 +36,10 @@ public class Book {
     @Range(min = 0, max = 5)
     private float rating;
 
+    @Column
+    @Range(min = 0, max = 10000000)
+    private float numbersOfVoters;
+
     @ElementCollection
     private List<String> authors;
 
@@ -45,8 +53,10 @@ public class Book {
     private LocalDateTime dateAdded;
 
     @ManyToMany(mappedBy = "books")
+    @JsonBackReference
     private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "book")
+    @JsonIgnore
     private List<UserBook> userBooks = new ArrayList<>();
 }

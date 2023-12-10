@@ -1,6 +1,6 @@
 package com.example.mylibrary.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +12,7 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"books", "userBooks"})
 public class User {
 
     @Id
@@ -43,9 +44,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
+    @JsonManagedReference
     private List<Book> books = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<UserBook> userBooks = new ArrayList<>();
 
 
